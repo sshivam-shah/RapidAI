@@ -180,7 +180,7 @@ export const generateImage = async (req, res) => {
 export const removeImageBackground = async (req, res) => {
   try {
     const { userId } = req.auth();
-    const { image } = req.file;
+    const image = req.file;
     const plan = req.plan;
 
     // no free usaeg only premium
@@ -214,7 +214,7 @@ export const removeImageObject = async (req, res) => {
   try {
     const { userId } = req.auth();
     const { object } = req.body;
-    const { image } = req.file;
+    const image = req.file;
     const plan = req.plan;
 
     // no free usaeg only premium
@@ -230,7 +230,7 @@ export const removeImageObject = async (req, res) => {
     const imageUrl = cloudinary.url(public_id, {
       transformation: [
         {
-          effect: `gen_remove: ${object}`,
+          effect: `gen_remove:${object}`,
         },
       ],
       resource_type: "image",
@@ -283,10 +283,10 @@ export const resumeReview = async (req, res) => {
       temperature: 0.7,
       max_tokens: 1000,
     });
-
+    
     const content = response.choices[0].message.content;
-
-    await sql`INSERT INTO creations(user_id, prompt, content, type) VALUES (${userId}, Review the uploaded resume, ${content}, 'resume-review')`;
+    
+    await sql`INSERT INTO creations(user_id, prompt, content, type) VALUES (${userId}, 'Review the uploaded resume', ${content}, 'resume-review')`;
 
     res.json({ success: true, content: content });
   } catch (error) {
